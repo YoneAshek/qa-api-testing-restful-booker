@@ -1,0 +1,920 @@
+{
+  "info": {
+    "_postman_id": "c109bb2b-d68c-48dc-aab6-c24de23be397",
+    "name": "Restful_Booker_API_Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53957357"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Ping",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/ping",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "ping"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "CreateToken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains 'token' string\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"token\");\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "pm.environment.set(\"token\", response_body.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "CreateBooking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body contains 'bookingid' property\", function () {\r",
+                  "    pm.expect(response_body).to.have.property(\"bookingid\")\r",
+                  "})\r",
+                  "if (response_body.hasOwnProperty(\"bookingid\")){\r",
+                  "    pm.environment.set(\"bookingID\", response_body.bookingid);\r",
+                  "}\r",
+                  "\r",
+                  "//These tests are created to compare and check values from request and response to see if they are the same.\r",
+                  "pm.test(\"Firstname value check\", function () {\r",
+                  "    pm.expect(response_body.booking.firstname).to.eql(pm.environment.get(\"firstname\"));\r",
+                  "});\r",
+                  "pm.test(\"Lastname value check\", function () {\r",
+                  "    pm.expect(response_body.booking.lastname).to.eql(pm.environment.get(\"lastname\"));\r",
+                  "});\r",
+                  "pm.test(\"Totalprice value check\", function () {\r",
+                  "    pm.expect(response_body.booking.totalprice).to.eql(Number(pm.environment.get(\"totalprice\")));\r",
+                  "});\r",
+                  "pm.test(\"Depositpaid value check\", function () {\r",
+                  "    pm.expect(response_body.booking.depositpaid).to.eql(pm.environment.get(\"depositpaid\") === 'true');\r",
+                  "});\r",
+                  "pm.test(\"Checkin value check\", function () {\r",
+                  "    pm.expect(response_body.booking.bookingdates.checkin).to.eql(pm.environment.get(\"checkin\"));\r",
+                  "});\r",
+                  "pm.test(\"Checkout value check\", function () {\r",
+                  "    pm.expect(response_body.booking.bookingdates.checkout).to.eql(pm.environment.get(\"checkout\"));\r",
+                  "});\r",
+                  "pm.test(\"Additionalneeds value check\", function () {\r",
+                  "    pm.expect(response_body.booking.additionalneeds).to.eql(pm.environment.get(\"additionalneeds\"));\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"firstname\" : \"{{firstname}}\",\r\n    \"lastname\" : \"{{lastname}}\",\r\n    \"totalprice\" : {{totalprice}},\r\n    \"depositpaid\" : {{depositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/booking",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateBooking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "//These tests are created to compare and check values from request and response to see if they are the same.\r",
+                  "pm.test(\"Firstname_update value check\", function () {\r",
+                  "    pm.expect(response_body.firstname).to.eql(pm.environment.get(\"firstname_update\"));\r",
+                  "});\r",
+                  "pm.test(\"Lastname_update value check\", function () {\r",
+                  "    pm.expect(response_body.lastname).to.eql(pm.environment.get(\"lastname_update\"));\r",
+                  "});\r",
+                  "pm.test(\"Totalprice_update value check\", function () {\r",
+                  "    pm.expect(response_body.totalprice).to.eql(Number(pm.environment.get(\"totalprice_update\")));\r",
+                  "});\r",
+                  "pm.test(\"Depositpaid_update value check\", function () {\r",
+                  "    pm.expect(response_body.depositpaid).to.eql(pm.environment.get(\"depositpaid_update\") === 'true');\r",
+                  "});\r",
+                  "pm.test(\"Checkin_update value check\", function () {\r",
+                  "    pm.expect(response_body.bookingdates.checkin).to.eql(pm.environment.get(\"checkin_update\"));\r",
+                  "});\r",
+                  "pm.test(\"Checkout_update value check\", function () {\r",
+                  "    pm.expect(response_body.bookingdates.checkout).to.eql(pm.environment.get(\"checkout_update\"));\r",
+                  "});\r",
+                  "pm.test(\"Additionalneeds_update value check\", function () {\r",
+                  "    pm.expect(response_body.additionalneeds).to.eql(pm.environment.get(\"additionalneeds_update\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token={{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"firstname\" : \"{{firstname_update}}\",\r\n    \"lastname\" : \"{{lastname_update}}\",\r\n    \"totalprice\" : {{totalprice_update}},\r\n    \"depositpaid\" : {{depositpaid_update}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin_update}}\",\r\n        \"checkout\" : \"{{checkout_update}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds_update}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/booking/{{bookingID}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking",
+                "{{bookingID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PatrialUpdateBooking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "//Tests created on the condition that we only update 'lastname' and 'totalprice'. \r",
+                  "//All other values remain the same.\r",
+                  "pm.test(\"Firstname value remains the same\", function () {\r",
+                  "    pm.expect(response_body.firstname).to.eql(pm.environment.get(\"firstname\"));\r",
+                  "});\r",
+                  "pm.test(\"Lastname value changes\", function () {\r",
+                  "    pm.expect(response_body.lastname).to.eql(pm.environment.get(\"lastname_update\"));\r",
+                  "});\r",
+                  "pm.test(\"Totalprice value changes\", function () {\r",
+                  "    pm.expect(response_body.totalprice).to.eql(Number(pm.environment.get(\"totalprice_update\")));\r",
+                  "});\r",
+                  "pm.test(\"Depositpaid value remains the same\", function () {\r",
+                  "    pm.expect(response_body.depositpaid).to.eql(pm.environment.get(\"depositpaid\") === 'true');\r",
+                  "});\r",
+                  "pm.test(\"Checkin value remains the same\", function () {\r",
+                  "    pm.expect(response_body.bookingdates.checkin).to.eql(pm.environment.get(\"checkin\"));\r",
+                  "});\r",
+                  "pm.test(\"Checkout value remains the same\", function () {\r",
+                  "    pm.expect(response_body.bookingdates.checkout).to.eql(pm.environment.get(\"checkout\"));\r",
+                  "});\r",
+                  "pm.test(\"Additionalneeds value remains the same\", function () {\r",
+                  "    pm.expect(response_body.additionalneeds).to.eql(pm.environment.get(\"additionalneeds\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token={{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"lastname\" : \"{{lastname_update}}\",\r\n    \"totalprice\" : \"{{totalprice_update}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/booking/{{bookingID}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking",
+                "{{bookingID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetBookingIds",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body is an array\", function () {\r",
+                  "    pm.expect(response_body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains more than 0 bookings\", function () {\r",
+                  "    pm.expect(response_body.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each booking contains 'bookingid'\", function () {\r",
+                  "    response_body.forEach(function (booking) {\r",
+                  "        pm.expect(booking).to.have.property(\"bookingid\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetBooking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Firstname value matches given ID\", function () {\r",
+                  "    pm.expect(response_body.firstname).to.eql(pm.environment.get(\"firstname\"));\r",
+                  "});\r",
+                  "pm.test(\"Lastname value matches given ID\", function () {\r",
+                  "    pm.expect(response_body.lastname).to.eql(pm.environment.get(\"lastname\"));\r",
+                  "});\r",
+                  "pm.test(\"Totalprice value matches given ID\", function () {\r",
+                  "    pm.expect(response_body.totalprice).to.eql(Number(pm.environment.get(\"totalprice\")));\r",
+                  "});\r",
+                  "pm.test(\"Depositpaid value matches given ID\", function () {\r",
+                  "    pm.expect(response_body.depositpaid).to.eql(pm.environment.get(\"depositpaid\") === 'true');\r",
+                  "});\r",
+                  "pm.test(\"Checkin value matches given ID\", function () {\r",
+                  "    pm.expect(response_body.bookingdates.checkin).to.eql(pm.environment.get(\"checkin\"));\r",
+                  "});\r",
+                  "pm.test(\"Checkout value matches given ID\", function () {\r",
+                  "    pm.expect(response_body.bookingdates.checkout).to.eql(pm.environment.get(\"checkout\"));\r",
+                  "});\r",
+                  "pm.test(\"Additionalneeds value matches given ID\", function () {\r",
+                  "    pm.expect(response_body.additionalneeds).to.eql(pm.environment.get(\"additionalneeds\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking/{{bookingID}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking",
+                "{{bookingID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DeleteBooking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "token={{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/booking/{{bookingID}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking",
+                "{{bookingID}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetDeletedBooking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response status contains 'Not Found' message\", function () {\r",
+                  "    pm.expect(pm.response.status).to.eql(\"Not Found\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking/{{bookingID}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking",
+                "{{bookingID}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GetBookingsWithFilters",
+      "item": [
+        {
+          "name": "GetBookingIds_Firstname",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body is an array\", function () {\r",
+                  "    pm.expect(response_body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains more than 0 bookings\", function () {\r",
+                  "    pm.expect(response_body.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each booking contains 'bookingid'\", function () {\r",
+                  "    response_body.forEach(function (booking) {\r",
+                  "        pm.expect(booking).to.have.property(\"bookingid\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking?firstname={{firstname}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "firstname",
+                  "value": "{{firstname}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetBookingIds_Lastname",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body is an array\", function () {\r",
+                  "    pm.expect(response_body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains more than 0 bookings\", function () {\r",
+                  "    pm.expect(response_body.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each booking contains 'bookingid'\", function () {\r",
+                  "    response_body.forEach(function (booking) {\r",
+                  "        pm.expect(booking).to.have.property(\"bookingid\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking?lastname={{lastname}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "lastname",
+                  "value": "{{lastname}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetBookingIds_Checkin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body is an array\", function () {\r",
+                  "    pm.expect(response_body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains more than 0 bookings\", function () {\r",
+                  "    pm.expect(response_body.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each booking contains 'bookingid'\", function () {\r",
+                  "    response_body.forEach(function (booking) {\r",
+                  "        pm.expect(booking).to.have.property(\"bookingid\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking?checkin={{checkin}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "checkin",
+                  "value": "{{checkin}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetBookingIds_Checkout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body is an array\", function () {\r",
+                  "    pm.expect(response_body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains more than 0 bookings\", function () {\r",
+                  "    pm.expect(response_body.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each booking contains 'bookingid'\", function () {\r",
+                  "    response_body.forEach(function (booking) {\r",
+                  "        pm.expect(booking).to.have.property(\"bookingid\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking?checkout={{checkout}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "checkout",
+                  "value": "{{checkout}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetBookingIds_AllParams",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body is an array\", function () {\r",
+                  "    pm.expect(response_body).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body contains more than 0 bookings\", function () {\r",
+                  "    pm.expect(response_body.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each booking contains 'bookingid'\", function () {\r",
+                  "    response_body.forEach(function (booking) {\r",
+                  "        pm.expect(booking).to.have.property(\"bookingid\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/booking?firstname={{firstname}}&lastname={{lastname}}&checkin={{checkin}}&checkout={{checkout}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ],
+              "query": [
+                {
+                  "key": "firstname",
+                  "value": "{{firstname}}"
+                },
+                {
+                  "key": "lastname",
+                  "value": "{{lastname}}"
+                },
+                {
+                  "key": "checkin",
+                  "value": "{{checkin}}"
+                },
+                {
+                  "key": "checkout",
+                  "value": "{{checkout}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Booking_RandomValues_ReadDocs",
+      "item": [
+        {
+          "name": "CreateBooking_RandomValues",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const response_body = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response body contains 'bookingid' property\", function () {\r",
+                  "    pm.expect(response_body).to.have.property(\"bookingid\")\r",
+                  "})\r",
+                  "if (response_body.hasOwnProperty(\"bookingid\")){\r",
+                  "    pm.environment.set(\"bookingID\", response_body.bookingid);\r",
+                  "}\r",
+                  "\r",
+                  "//These tests are created to compare and check values from request and response to see if they are the same.\r",
+                  "pm.test(\"Firstname value check\", function () {\r",
+                  "    pm.expect(response_body.booking.firstname).to.eql(pm.environment.get(\"firstname\"));\r",
+                  "});\r",
+                  "pm.test(\"Lastname value check\", function () {\r",
+                  "    pm.expect(response_body.booking.lastname).to.eql(pm.environment.get(\"lastname\"));\r",
+                  "});\r",
+                  "pm.test(\"Totalprice value check\", function () {\r",
+                  "    pm.expect(response_body.booking.totalprice).to.eql(Number(pm.environment.get(\"totalprice\")));\r",
+                  "});\r",
+                  "pm.test(\"Depositpaid value check\", function () {\r",
+                  "    pm.expect(response_body.booking.depositpaid).to.eql(pm.environment.get(\"depositpaid\") === 'true');\r",
+                  "});\r",
+                  "pm.test(\"Checkin value check\", function () {\r",
+                  "    pm.expect(response_body.booking.bookingdates.checkin).to.eql(pm.environment.get(\"checkin\"));\r",
+                  "});\r",
+                  "pm.test(\"Checkout value check\", function () {\r",
+                  "    pm.expect(response_body.booking.bookingdates.checkout).to.eql(pm.environment.get(\"checkout\"));\r",
+                  "});\r",
+                  "pm.test(\"Additionalneeds value check\", function () {\r",
+                  "    pm.expect(response_body.booking.additionalneeds).to.eql(pm.environment.get(\"additionalneeds\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "//Getting random values with '$random' for each parameter neeeded in the Body. \r",
+                  "//Using 'replaceIn' function to get the initial value early and save it to Environment Variables for later use.\r",
+                  "const random_firstname = pm.variables.replaceIn(\"{{$randomFirstName}}\");\r",
+                  "const random_lastname = pm.variables.replaceIn(\"{{$randomLastName}}\");\r",
+                  "const random_totalprice = Number(pm.variables.replaceIn(\"{{$randomInt}}\"));\r",
+                  "const random_depositpaid = Boolean(pm.variables.replaceIn(\"{{$randomBoolean}}\"));\r",
+                  "const random_checkin = new Date(pm.variables.replaceIn(\"{{$randomDateRecent}}\"));\r",
+                  "const random_checkout = new Date(pm.variables.replaceIn(\"{{$randomDateFuture}}\"));\r",
+                  "const random_additionalneeds = pm.variables.replaceIn(\"{{$randomNoun}}\");\r",
+                  "\r",
+                  "//Formating 'checkin' and 'checkout' date. \r",
+                  "//Chaning 'checkin' and 'checkout' type to Date object, in order to use '.get' methods. \r",
+                  "//Using '.padStart()' method to ensure the accurate length of the variable.\r",
+                  "const random_checkin_day = String(random_checkin.getDate()).padStart(2, \"0\");\r",
+                  "const random_checkin_month = String(random_checkin.getMonth() + 1).padStart(2, \"0\");\r",
+                  "const random_checkin_year = random_checkin.getFullYear();\r",
+                  "const random_formatted_checkin = `${random_checkin_year}-${random_checkin_month}-${random_checkin_day}`;\r",
+                  "\r",
+                  "const random_checkout_day = String(random_checkout.getDate()).padStart(2, \"0\");\r",
+                  "const random_checkout_month = String(random_checkout.getMonth() + 1).padStart(2, \"0\");\r",
+                  "const random_checkout_year = random_checkout.getFullYear();\r",
+                  "const random_formatted_checkout = `${random_checkout_year}-${random_checkout_month}-${random_checkout_day}`;\r",
+                  "\r",
+                  "//Setting random and formatted values to Environment Variables.\r",
+                  "pm.environment.set(\"firstname\", random_firstname);\r",
+                  "pm.environment.set(\"lastname\", random_lastname);\r",
+                  "pm.environment.set(\"totalprice\", random_totalprice);\r",
+                  "pm.environment.set(\"depositpaid\", random_depositpaid);\r",
+                  "pm.environment.set(\"checkin\", random_formatted_checkin);\r",
+                  "pm.environment.set(\"checkout\", random_formatted_checkout);\r",
+                  "pm.environment.set(\"additionalneeds\", random_additionalneeds);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"firstname\" : \"{{firstname}}\",\r\n    \"lastname\" : \"{{lastname}}\",\r\n    \"totalprice\" : {{totalprice}},\r\n    \"depositpaid\" : {{depositpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{checkin}}\",\r\n        \"checkout\" : \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\" : \"{{additionalneeds}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/booking",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "booking"
+              ]
+            },
+            "description": "##### Use **Restful_Booker_Environment_RandomValues** Environment for this request.\n\nThis request is only an addition to the whole Collection. It should only be used with the given Environment.\n\nDon't use it during Collection Runs and Happy Path testing."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
