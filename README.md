@@ -1,8 +1,8 @@
 # QA Testing Restful-Booker API
 
 ## Project Overview
-Project created to show the basic understanding of Postman, based on Restful-Booker API testing.
----
+Project created to show the basic understanding of Postman, based on [Restful-Booker](https://restful-booker.herokuapp.com/) API.
+
 The Collection also contains 'CreateBooking_RandomValues' endpoint with automated value creation. 
 This request is only an addition to the whole Collection and it should only be used with the 'Restful_Booker_Environment_RandomValues' Environment.
 When using Collection Runner while testing the Happy Path, make sure to uncheck this endpoint. 
@@ -29,14 +29,6 @@ The project contains written tests for:
 - Data validation
 - Created/Updated booking data
 - Deleted booking validation
-
-## Project Structure
-Restful_Booker_API_Testing/
-  Postman/
-    Restful_Booker_API_Testing.postman_collection.json
-    Restful_Booker_Environment.postman_environment.json
-    Restful_Booker_Environment_RandomValues.postman_environment.json
-README.md
 
 ## How to Run
 1. Download Collection and both Environment files
